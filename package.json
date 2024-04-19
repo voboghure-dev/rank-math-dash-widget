@@ -1,0 +1,20 @@
+{
+	"name": "rank-math-dash-widget",
+	"version": "1.0.0",
+	"description": "Code challenge plugin for Rank Math",
+	"main": "src/index.js",
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@wordpress/scripts": "^27.6.0"
+	},
+	"dependencies": {
+		"axios": "^1.6.8",
+		"recharts": "^2.12.5"
+	}
+}
