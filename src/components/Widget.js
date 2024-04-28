@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { __ } from '@wordpress/i18n';
+import { useState, useEffect } from '@wordpress/element';
+import { SelectControl } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 function Widget() {
@@ -7,15 +9,15 @@ function Widget() {
 
 	const fetchData = async (days) => {
 		try {
-			const res = await axios.get(`/wp-json/rmdw/v1/recharts-data/${days}`);
-			setData(res.data);
+			const res = await apiFetch({ path: `/rmdw/v1/recharts-data/${days}` });
+			setData(res);
 		} catch (error) {
-			console.log(first);
+			console.log(error);
 		}
 	};
 
-	const filterData = (e) => {
-		fetchData(e.target.value);
+	const filterData = (value) => {
+		fetchData(value);
 	};
 
 	useEffect(() => {
@@ -26,14 +28,17 @@ function Widget() {
 		<>
 			<div style={{ display: 'flex', justifyContent: 'space-between', 'padding-bottom': '15px' }}>
 				<div>
-					<h2 style={{ 'padding-top': 0 }}>Graph Widget</h2>
+					<h2 style={{ 'padding-top': 0 }}>{__('Graph Widget', 'myrank-math-dash-widgetguten')}</h2>
 				</div>
 				<div>
-					<select onChange={filterData}>
-						<option value='7'>7 Days</option>
-						<option value='15'>15 Days</option>
-						<option value='30'>1 month</option>
-					</select>
+					<SelectControl
+						options={[
+							{ label: __('7 Days', 'myrank-math-dash-widgetguten'), value: '7' },
+							{ label: __('15 Days', 'myrank-math-dash-widgetguten'), value: '15' },
+							{ label: __('1 month', 'myrank-math-dash-widgetguten'), value: '30' },
+						]}
+						onChange={filterData}
+					/>
 				</div>
 			</div>
 

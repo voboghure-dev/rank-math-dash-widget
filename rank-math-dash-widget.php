@@ -4,7 +4,7 @@
  * Description:       Code challenge plugin for Rank Math
  * Requires at least: 5.0
  * Requires PHP:      7.0
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            Tapan Kumer Das
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -49,7 +49,7 @@ if (  ! class_exists( 'Rank_Math_Dash_Widget' ) ) {
 		 * @return void
 		 */
 		public function dashboard_setup() {
-			wp_add_dashboard_widget( 'rmdw_widget', 'Rank Math Graph Widget', [$this, 'widget_callback'] );
+			wp_add_dashboard_widget( 'rmdw_widget', __( 'Rank Math Graph Widget', 'rank-math-dash-widget' ), [$this, 'widget_callback'] );
 		}
 
 		/**
@@ -67,11 +67,14 @@ if (  ! class_exists( 'Rank_Math_Dash_Widget' ) ) {
 		 * @return void
 		 */
 		public function load_scripts() {
-			wp_enqueue_script( 'rmdw-reactjs', plugin_dir_url( __FILE__ ) . 'build/index.js', ['wp-element'] );
-			wp_localize_script( 'rmdw-reactjs', 'rmdwData', [
-				'apiUrl' => home_url( '/wp-json' ),
-				'nonce'  => wp_create_nonce( 'wp_rest' ),
-			] );
+			$screen = get_current_screen();
+			if ( $screen->id == 'dashboard' ) {
+				wp_enqueue_script( 'rmdw-reactjs', plugin_dir_url( __FILE__ ) . 'build/index.js', ['wp-element', 'wp-components', 'wp-api-fetch', 'wp-i18n'] );
+				wp_localize_script( 'rmdw-reactjs', 'rmdwData', [
+					'apiUrl' => home_url( '/wp-json' ),
+					'nonce'  => wp_create_nonce( 'wp_rest' ),
+				] );
+			}
 		}
 
 		/**
@@ -95,22 +98,22 @@ if (  ! class_exists( 'Rank_Math_Dash_Widget' ) ) {
 			dbDelta( $sql );
 
 			$insert_query = "INSERT INTO $table_name (`name`, `uv`, `pv`, `created`) VALUES
-            ('Page A', 4000, 2300, '2024-03-20'),
-            ('Page B', 5500, 1100, '2024-03-22'),
-            ('Page C', 4500, 2200, '2024-03-24'),
-            ('Page D', 3500, 4300, '2024-03-26'),
-            ('Page E', 2300, 3900, '2024-03-28'),
-            ('Page F', 1200, 2900, '2024-03-30'),
-            ('Page G', 6500, 4300, '2024-04-01'),
-            ('Page H', 2700, 3100, '2024-04-03'),
-            ('Page I', 2900, 3900, '2024-04-05'),
-            ('Page J', 3100, 2900, '2024-04-07'),
-            ('Page K', 5400, 4300, '2024-04-09'),
-            ('Page L', 3900, 1200, '2024-04-11'),
-            ('Page M', 4700, 1100, '2024-04-13'),
-            ('Page N', 5100, 1900, '2024-04-15'),
-            ('Page O', 6200, 2800, '2024-04-17'),
-            ('Page P', 3400, 1700, '2024-04-19')
+            ('Page A', 4000, 2300, '2024-04-01'),
+            ('Page B', 5500, 1100, '2024-04-03'),
+            ('Page C', 4500, 2200, '2024-04-05'),
+            ('Page D', 3500, 4300, '2024-04-07'),
+            ('Page E', 2300, 3900, '2024-04-09'),
+            ('Page F', 1200, 2900, '2024-04-11'),
+            ('Page G', 6500, 4300, '2024-04-13'),
+            ('Page H', 2700, 3100, '2024-04-15'),
+            ('Page I', 2900, 3900, '2024-04-17'),
+            ('Page J', 3100, 2900, '2024-04-19'),
+            ('Page K', 5400, 4300, '2024-04-21'),
+            ('Page L', 3900, 1200, '2024-04-23'),
+            ('Page M', 4700, 1100, '2024-04-25'),
+            ('Page N', 5100, 1900, '2024-04-27'),
+            ('Page O', 6200, 2800, '2024-04-29'),
+            ('Page P', 3400, 1700, '2024-04-30')
             ";
 
 			$wpdb->query( $insert_query );
@@ -147,7 +150,7 @@ if (  ! class_exists( 'Rank_Math_Dash_Widget' ) ) {
 		 * @return boolean
 		 */
 		public function get_recharts_permission() {
-			return true;
+			return current_user_can( 'read' );
 		}
 
 		/**
